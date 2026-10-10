@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A6 Brasil — Loja VIP</title>
+<meta name="description" content="Servidor brasileiro de Unturned. Kits VIP com ativação automática via PIX.">
+<meta name="theme-color" content="#0b0b0a">
+<link rel="icon" href="/img/favicon.png">
+<link rel="preload" href="/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/img/logo-256.webp" as="image">
+<style>
+@font-face{font-family:"BC";src:url(/fonts/barlow-condensed-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:block}
+@font-face{font-family:"BC";src:url(/fonts/barlow-condensed-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:block}
+@font-face{font-family:"B";src:url(/fonts/barlow-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"B";src:url(/fonts/barlow-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+:root{
+  --bg:#0b0b0a;--panel:#121210;--panel2:#17160f;--line:#26241d;--line2:#3a3626;
+  --gold:#f2b705;--gold-d:#a77d00;--gold-bg:rgba(242,183,5,.07);
+  --txt:#ecebe6;--mut:#8f8c80;--dim:#5f5c52;--ok:#3ecf6e;--bad:#e5484d;
+  --cut:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font:400 16px/1.55 B,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+[hidden]{display:none!important}
+.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.wrap{max-width:1160px;margin:0 auto;padding:0 16px}
+.h{font-family:BC,Impact,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.02em;line-height:.95}
+.lbl{font:600 12px/1 BC,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.mut{color:var(--mut)}
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;font:700 15px/1 BC,sans-serif;letter-spacing:.08em;text-transform:uppercase;transition:background .15s,color .15s,border-color .15s;white-space:nowrap}
+.btn-p{background:var(--gold);color:#111;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.btn-p:hover{background:#ffcb2e}
+.btn-s{border:1px solid var(--line2);color:var(--txt)}
+.btn-s:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm{height:36px;padding:0 14px;font-size:13px}
+.btn[disabled]{opacity:.5;pointer-events:none}
+/* topo */
+.top{position:sticky;top:0;z-index:5;background:rgba(11,11,10,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:64px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:38px;height:38px}
+.brand span{font:700 22px/1 BC,sans-serif;letter-spacing:.04em;white-space:nowrap}
+.nav{display:flex;gap:22px;margin-right:auto}
+.nav a{font:600 14px/1 BC,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.nav a:hover{color:var(--txt)}
+.acct{display:flex;align-items:center;gap:10px;font-size:14px}
+.acct b{font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* hero */
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:center;padding:72px 0 64px}
+.hero h1{font-size:clamp(56px,9vw,112px);margin:14px 0 18px}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p{max-width:470px;color:var(--mut);font-size:17px}
+.hero .ctas{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap}
+/* painel do servidor */
+.srv{background:var(--panel);border:1px solid var(--line);position:relative}
+.srv:before{content:"";position:absolute;top:-1px;left:-1px;width:40px;height:3px;background:var(--gold)}
+.srv-h{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.state{display:flex;align-items:center;gap:8px;font:600 14px/1 BC,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+.is-on .dot{background:var(--ok);box-shadow:0 0 0 4px rgba(62,207,110,.15)}
+.is-off .dot{background:var(--bad)}
+.srv-b{padding:18px}
+.count{display:flex;align-items:baseline;gap:8px}
+.count .n{font:700 64px/1 BC,sans-serif}
+.count .m{font:600 24px/1 BC,sans-serif;color:var(--dim)}
+.bar{height:4px;background:var(--line);margin:12px 0 16px}
+.bar i{display:block;height:100%;background:var(--gold);width:0;transition:width .6s}
+.plist{display:flex;flex-wrap:wrap;gap:6px;max-height:96px;overflow:hidden}
+.plist span{font-size:13px;background:var(--panel2);border:1px solid var(--line);padding:3px 8px;color:#cfcdc4}
+.plist .more{color:var(--gold);border-color:var(--line2)}
+.plist .none{border:0;background:none;padding:0;color:var(--mut)}
+.ipbox{display:flex;border-top:1px solid var(--line)}
+.ipbox code{flex:1;padding:14px 18px;font:600 15px/1 ui-monospace,Consolas,monospace;color:var(--gold);overflow:hidden;text-overflow:ellipsis}
+.ipbox button{display:flex;align-items:center;gap:6px;padding:0 18px;border-left:1px solid var(--line);font:600 13px/1 BC,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.ipbox button:hover{color:var(--gold)}
+/* seções */
+section{padding:56px 0;border-top:1px solid var(--line);scroll-margin-top:64px}
+.sh{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+.sh h2{font-size:44px;margin-top:8px}
+.sh p{max-width:430px;color:var(--mut);font-size:15px}
+/* foto sempre inteira: fundo desfocado da própria imagem + contain */
+.ph{position:relative;overflow:hidden;background:#000;cursor:zoom-in}
+.ph .bg{position:absolute;inset:-24px;background:center/cover no-repeat;filter:blur(20px) brightness(.4);transform:scale(1.1)}
+.ph img{position:relative;display:block;width:100%;height:100%;object-fit:contain;transition:transform .35s}
+.ph:hover img{transform:scale(1.03)}
+.ph .zoom{position:absolute;right:10px;bottom:10px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.75);border:1px solid var(--line2);padding:5px 9px;font:600 12px/1 BC,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.ph .zoom .i{width:14px;height:14px}
+/* destaque REI */
+.feat{display:grid;grid-template-columns:1.1fr 1fr;background:var(--panel);border:1px solid var(--gold-d);position:relative;clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.feat .ph{min-height:380px}
+.feat .ribbon{position:absolute;top:0;left:0;z-index:2;display:flex;align-items:center;gap:6px;background:var(--gold);color:#111;padding:8px 14px;font:700 13px/1 BC,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.feat-b{padding:32px;display:flex;flex-direction:column;gap:16px;background:linear-gradient(180deg,var(--gold-bg),transparent 60%)}
+.feat h3{font-size:56px}
+.price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.price .v{font:700 44px/1 BC,sans-serif;color:var(--gold)}
+.price s{color:var(--dim);font-size:18px}
+.save{font:700 13px/1 BC,sans-serif;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--gold);color:var(--gold);padding:5px 8px}
+.inc{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-size:15px}
+.inc li{list-style:none;display:flex;align-items:center;gap:8px}
+.inc .i{width:16px;height:16px;color:var(--gold)}
+.feat .ctas{display:flex;gap:10px;margin-top:auto;flex-wrap:wrap}
+/* escada */
+.ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+.card{background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;transition:border-color .2s}
+.card:hover{border-color:var(--line2)}
+.card .ph{aspect-ratio:16/10}
+.card-b{padding:16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.tier{display:flex;align-items:center;gap:10px}
+.tier .seg{display:flex;gap:3px}
+.tier .seg i{width:16px;height:4px;background:var(--line2)}
+.tier .seg i.on{background:var(--gold)}
+.card h3{font-size:28px}
+.card .pv{font:700 30px/1 BC,sans-serif}
+.card .gets{font-size:14px;color:var(--mut);flex:1}
+.card .gets b{color:var(--txt);font-weight:600}
+.card .acts{display:flex;gap:8px}
+.card .acts .btn{flex:1;padding:0 10px}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:4px;font:600 15px/1 BC,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.flow .i{width:14px;height:14px;color:var(--dim)}
+.flow span:last-of-type{color:var(--gold)}
+/* avulsos e grátis */
+.rows{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.row{display:grid;grid-template-columns:140px 1fr auto;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--line);padding:10px}
+.row .ph{aspect-ratio:4/3}
+.row .ph .zoom{display:none}
+.row h4{font:700 24px/1 BC,sans-serif;text-transform:uppercase}
+.row .sub{font-size:14px;color:var(--mut);margin-top:4px}
+.row .side{display:flex;flex-direction:column;align-items:flex-end;gap:8px;padding-right:6px}
+.row .pv{font:700 26px/1 BC,sans-serif}
+.free-tag{font:700 13px/1 BC,sans-serif;letter-spacing:.12em;color:var(--ok);text-transform:uppercase}
+/* como comprar */
+.how{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line)}
+.how div{padding:22px;border-right:1px solid var(--line)}
+.how div:last-child{border-right:0}
+.how .lbl{display:block;margin-bottom:10px}
+.how h4{font:700 22px/1.1 BC,sans-serif;text-transform:uppercase;margin-bottom:6px}
+.how p{font-size:14px;color:var(--mut)}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--dim);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* modais */
+.modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:16px}
+.modal.open{display:flex}
+.box{width:100%;max-width:440px;max-height:94vh;overflow:auto;background:var(--panel);border:1px solid var(--line2);padding:24px;position:relative}
+.box:before,.viewer:before{content:"";position:absolute;top:-1px;left:-1px;width:48px;height:3px;background:var(--gold)}
+.close{position:absolute;top:12px;right:12px;width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);color:var(--mut);z-index:3}
+.close:hover{color:var(--txt);border-color:var(--line2)}
+.box h3{font-size:34px;margin:8px 0 4px}
+.field{margin-top:16px}
+.field label{display:block;font:600 12px/1 BC,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.field input,.field textarea{width:100%;background:#0b0b0a;border:1px solid var(--line2);color:var(--txt);padding:12px;font:inherit;font-size:15px;outline:none}
+.field input:focus{border-color:var(--gold)}
+.field textarea{font:12px/1.4 ui-monospace,Consolas,monospace;color:var(--gold);resize:none}
+.who{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#0b0b0a;border:1px solid var(--line2);padding:12px}
+.who small{display:block;color:var(--dim);font-size:12px}
+.who a{font-size:13px;color:var(--mut);text-decoration:underline}
+.err{color:var(--bad);font-size:14px;min-height:20px;margin-top:10px}
+.mrow{display:flex;gap:10px;margin-top:16px}.mrow .btn{flex:1}
+.qr{display:block;width:220px;height:220px;margin:16px auto;background:#fff;padding:8px}
+.wait{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--mut);font-size:14px;margin-top:14px}
+.spin{width:14px;height:14px;border:2px solid var(--line2);border-top-color:var(--gold);border-radius:50%;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.done{text-align:center}
+.done .ok{width:56px;height:56px;margin:8px auto 12px;display:grid;place-items:center;border:2px solid var(--ok);color:var(--ok);border-radius:50%}
+.done .ok .i{width:28px;height:28px}
+.viewer{width:100%;max-width:900px;max-height:95vh;overflow:auto;background:var(--panel);border:1px solid var(--line2);padding:18px;position:relative}
+.v-head{display:flex;justify-content:space-between;gap:12px;padding-right:44px;margin-bottom:14px}
+.v-head h3{font-size:36px;margin-top:6px}
+.stage{position:relative}
+.stage .ph{height:min(62vh,540px);cursor:default}
+.stage .ph:hover img{transform:none}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:46px;height:46px;display:grid;place-items:center;background:rgba(0,0,0,.7);border:1px solid var(--line2);color:var(--txt)}
+.arrow:hover{border-color:var(--gold);color:var(--gold)}
+.arrow .i{width:22px;height:22px}
+.arrow.l{left:10px}.arrow.r{right:10px}
+.thumbs{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px}
+.thumbs button{flex:none;width:104px;border:1px solid var(--line);background:#0b0b0a;padding:4px;text-align:left}
+.thumbs img{display:block;width:100%;height:56px;object-fit:contain}
+.thumbs span{display:block;font:600 12px/1.2 BC,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:5px 2px 1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thumbs .on{border-color:var(--gold)}.thumbs .on span{color:var(--gold)}
+.v-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px;color:var(--mut);font-size:14px}
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr;gap:32px;padding:40px 0}
+  .feat{grid-template-columns:1fr}.feat .ph{min-height:260px}
+  .ladder{grid-template-columns:repeat(2,1fr)}
+  .rows{grid-template-columns:1fr}
+  .nav{display:none}.top .wrap{justify-content:space-between}
+}
+@media(max-width:600px){
+  .ladder{grid-template-columns:1fr}
+  .row{grid-template-columns:96px 1fr}.row .side{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center;padding:0}
+  .how{grid-template-columns:1fr}.how div{border-right:0;border-bottom:1px solid var(--line)}
+  .feat-b{padding:20px}.feat h3{font-size:44px}.inc{grid-template-columns:1fr}
+  .sh h2{font-size:36px}
+  .acct b{display:none}
+  .stage .ph{height:52vh}.arrow{width:38px;height:38px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-l" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-r" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M2 6l4 11h12l4-11-6 5-4-7-4 7-6-5zM6 21h12"/></symbol>
+  <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></symbol>
+  <symbol id="i-in" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/img/logo-256.webp" alt="" width="38" height="38"><span>A6 BRASIL</span></a>
+    <nav class="nav"><a href="#loja">Loja</a><a href="#avulsos">Avulsos</a><a href="#como">Como comprar</a><a id="dc" href="#" target="_blank" rel="noopener" hidden>Discord</a></nav>
+    <div class="acct" id="acct"><a class="btn btn-s btn-sm" href="/steam-login"><svg class="i"><use href="#i-in"/></svg>Entrar com Steam</a></div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <div class="lbl">Unturned · Servidor brasileiro</div>
+      <h1 class="h">A6 <em>Brasil</em></h1>
+      <p>Kits VIP com ativação automática. Pagou no PIX, o kit cai na sua conta em segundos, sem precisar abrir ticket.</p>
+      <div class="ctas">
+        <a class="btn btn-p" href="#loja">Ver kits VIP</a>
+        <a class="btn btn-s" id="dc2" href="#" target="_blank" rel="noopener" hidden><svg class="i"><use href="#i-chat"/></svg>Discord</a>
+      </div>
+    </div>
+    <aside class="srv" id="srv">
+      <div class="srv-h"><div class="state"><span class="dot"></span><span id="stTxt">Verificando</span></div><span class="lbl" style="color:var(--dim)">Jogadores</span></div>
+      <div class="srv-b">
+        <div class="count"><span class="n" id="pN">–</span><span class="m" id="pM">/ –</span></div>
+        <div class="bar"><i id="pBar"></i></div>
+        <div class="plist" id="pList"></div>
+      </div>
+      <div class="ipbox"><code id="ip">—</code><button onclick="copyIp(this)"><svg class="i"><use href="#i-copy"/></svg><span>Copiar</span></button></div>
+    </aside>
+  </div>
+</div>
+
+<section id="loja">
+  <div class="wrap">
+    <div class="sh">
+      <div><div class="lbl">Loja VIP</div><h2 class="h">Kit mais completo</h2></div>
+      <p>O Rei libera tudo que existe na loja: a escada inteira e todos os avulsos.</p>
+    </div>
+    <div id="feat"></div>
+
+    <div class="sh" style="margin-top:56px">
+      <div><div class="lbl">Escada VIP</div><h2 class="h">Suba de nível</h2></div>
+      <p>Cada nível já vem com todos os de baixo. Comprou o SWAT, leva o Militar junto.</p>
+    </div>
+    <div class="flow" id="flow"></div>
+    <div class="ladder" id="ladder"></div>
+  </div>
+</section>
+
+<section id="avulsos">
+  <div class="wrap">
+    <div class="sh">
+      <div><div class="lbl">Avulsos</div><h2 class="h">Extras</h2></div>
+      <p>Fora da escada. Cada um libera só ele mesmo (o Rei já inclui todos).</p>
+    </div>
+    <div class="rows" id="extras"></div>
+
+    <div class="sh" style="margin-top:48px">
+      <div><div class="lbl">Grátis</div><h2 class="h">Todo mundo tem</h2></div>
+      <p>Liberados pra qualquer jogador, é só entrar no servidor.</p>
+    </div>
+    <div class="rows" id="free"></div>
+  </div>
+</section>
+
+<section id="como">
+  <div class="wrap">
+    <div class="sh"><div><div class="lbl">Como comprar</div><h2 class="h">Três passos</h2></div></div>
+    <div class="how">
+      <div><span class="lbl">Passo 1</span><h4>Entre com a Steam</h4><p>Botão no topo da página. O kit vai direto pra conta que logou.</p></div>
+      <div><span class="lbl">Passo 2</span><h4>Pague no PIX</h4><p>QR Code ou copia e cola, no app de qualquer banco.</p></div>
+      <div><span class="lbl">Passo 3</span><h4>Pronto</h4><p>Ativa sozinho quando o pagamento cai. Se estiver online, relogue.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span>A6 Brasil © <span id="y"></span></span><span>Não afiliado à Smartly Dressed Games.</span></div></footer>
+
+<div class="modal" id="m"><div class="box" id="mb"></div></div>
+<div class="modal" id="v">
+  <div class="viewer">
+    <button class="close" onclick="closeViewer()" aria-label="Fechar"><svg class="i"><use href="#i-x"/></svg></button>
+    <div class="v-head"><div><div class="lbl" id="vTag"></div><h3 class="h" id="vTitle"></h3></div></div>
+    <div class="stage">
+      <button class="arrow l" onclick="step(-1)" aria-label="Anterior"><svg class="i"><use href="#i-l"/></svg></button>
+      <div class="ph"><div class="bg" id="vBg"></div><img id="vImg" alt=""></div>
+      <button class="arrow r" onclick="step(1)" aria-label="Próximo"><svg class="i"><use href="#i-r"/></svg></button>
+    </div>
+    <div class="thumbs" id="vThumbs"></div>
+    <div class="v-foot"><span id="vCount"></span><button class="btn btn-p btn-sm" id="vBuy">Comprar</button></div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const brl = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => "&#" + c.charCodeAt(0) + ";");
+const ico = (n) => `<svg class="i"><use href="#i-${n}"/></svg>`;
+const short = (n) => n.replace(/^A6 /, "");
+const lsGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+const lsDel = (k) => { try { localStorage.removeItem(k); } catch {} };
+let KITS = {}, ME = {}, poll = null;
+$("y").textContent = new Date().getFullYear();
+
+// o que a compra de "k" libera: ele primeiro, depois os inclusos
+function bundle(k) {
+  const all = Object.values(KITS);
+  if (k.id === "rei") return [k, ...all.filter((x) => x.price > 0 && x.id !== "rei").sort((a, b) => (a.tier || 99) - (b.tier || 99))];
+  if (k.tier) return [k, ...all.filter((x) => x.tier && x.tier < k.tier).sort((a, b) => b.tier - a.tier)];
+  return [k];
+}
+const photo = (k, label) => `<div class="ph" onclick="openViewer('${k.id}')">
+  <div class="bg" style="background-image:url(/img/${k.img})"></div>
+  <img src="/img/${k.img}" alt="${esc(k.name)}" loading="lazy" decoding="async">
+  <span class="zoom">${ico("zoom")}${label}</span></div>`;
+
+function renderFeat(k) {
+  const others = bundle(k).slice(1);
+  const full = others.reduce((s, x) => s + x.price, 0);
+  $("feat").innerHTML = `<article class="feat">
+    <div class="ribbon">${ico("crown")}Mais completo</div>
+    ${photo(k, `Ver os ${others.length + 1} kits`)}
+    <div class="feat-b">
+      <h3 class="h">${esc(k.name)}</h3>
+      <div class="price"><span class="v">${brl(k.price)}</span>${full > k.price ? `<s>${brl(full)}</s><span class="save">Economia de ${brl(full - k.price)}</span>` : ""}</div>
+      <ul class="inc">${others.map((x) => `<li>${ico("check")}${esc(short(x.name))}</li>`).join("")}</ul>
+      <div class="ctas"><button class="btn btn-p" onclick="buy('rei')">Comprar o Rei</button><button class="btn btn-s" onclick="openViewer('rei')">${ico("layers")}Ver itens</button></div>
+    </div></article>`;
+}
+function renderCard(k, maxTier) {
+  const inc = bundle(k).slice(1);
+  return `<article class="card">
+    ${photo(k, inc.length ? `${inc.length + 1} kits` : "Ver")}
+    <div class="card-b">
+      <div class="tier"><span class="seg">${Array.from({ length: maxTier }, (_, i) => `<i class="${i < k.tier ? "on" : ""}"></i>`).join("")}</span><span class="lbl">Nível ${k.tier}</span></div>
+      <h3 class="h">${esc(short(k.name))}</h3>
+      <div class="pv">${brl(k.price)}</div>
+      <div class="gets">${inc.length ? `Leva junto: <b>${inc.map((x) => esc(short(x.name))).join(", ")}</b>` : "Primeiro nível da escada."}</div>
+      <div class="acts"><button class="btn btn-s btn-sm" onclick="openViewer('${k.id}')">Itens</button><button class="btn btn-p btn-sm" onclick="buy('${k.id}')">Comprar</button></div>
+    </div></article>`;
+}
+function renderRow(k) {
+  const free = k.price <= 0;
+  return `<article class="row">${photo(k, "Ver")}
+    <div><h4>${esc(short(k.name))}</h4><div class="sub">${free ? "Liberado pra todos" : "Compra avulsa"}</div></div>
+    <div class="side">${free ? `<span class="free-tag">Grátis</span>` : `<span class="pv">${brl(k.price)}</span><button class="btn btn-p btn-sm" onclick="buy('${k.id}')">Comprar</button>`}</div>
+  </article>`;
+}
+
+async function load() {
+  const r = await fetch("/api/info").then((r) => r.json());
+  r.kits.forEach((k) => (KITS[k.id] = k));
+  $("ip").textContent = r.ip;
+  if (r.discord) for (const id of ["dc", "dc2"]) { $(id).href = r.discord; $(id).hidden = false; }
+  const steps = r.kits.filter((k) => k.tier && k.id !== "rei").sort((a, b) => a.tier - b.tier);
+  if (KITS.rei) renderFeat(KITS.rei);
+  $("flow").innerHTML = steps.map((k) => `<span>${esc(short(k.name))}</span>`).join(ico("r"));
+  $("ladder").innerHTML = steps.map((k) => renderCard(k, steps.length)).join("");
+  $("extras").innerHTML = r.kits.filter((k) => k.extra).map(renderRow).join("");
+  $("free").innerHTML = r.kits.filter((k) => k.price <= 0).map(renderRow).join("");
+}
+
+async function status() {
+  try {
+    const s = await fetch("/api/status").then((r) => r.json());
+    $("srv").className = "srv " + (s.online ? "is-on" : "is-off");
+    $("stTxt").textContent = s.online ? "Online" : "Offline";
+    $("pN").textContent = s.online ? s.players : 0;
+    $("pM").textContent = "/ " + (s.max || "–");
+    $("pBar").style.width = s.online && s.max ? Math.min(100, (s.players / s.max) * 100) + "%" : "0";
+    const list = s.list || [], show = 14;
+    $("pList").innerHTML = list.length
+      ? list.slice(0, show).map((n) => `<span>${esc(n)}</span>`).join("") + (list.length > show ? `<span class="more">+${list.length - show}</span>` : "")
+      : `<span class="none">${s.online ? "Ninguém online agora." : "Servidor fora do ar no momento."}</span>`;
+  } catch { $("stTxt").textContent = "Indisponível"; }
+}
+function copyIp(b) {
+  navigator.clipboard.writeText($("ip").textContent);
+  const t = b.querySelector("span"); t.textContent = "Copiado"; setTimeout(() => (t.textContent = "Copiar"), 1400);
+}
+
+async function loadMe() {
+  ME = await fetch("/api/me").then((r) => r.json()).catch(() => ({}));
+  if (ME.steamid) $("acct").innerHTML = `<b title="${ME.steamid}">${esc(ME.name || ME.steamid)}</b><a class="btn btn-s btn-sm" href="/logout" title="Sair">${ico("out")}</a>`;
+  const pend = lsGet("a6pending");
+  if (pend && ME.steamid) buy(pend);
+  else if (location.hash === "#loja") $("loja").scrollIntoView();
+}
+
+// ---- visualizador com setas ----
+let V = { list: [], i: 0, owner: null };
+function openViewer(id) {
+  const k = KITS[id];
+  V = { list: bundle(k), i: 0, owner: k };
+  const many = V.list.length > 1;
+  $("vThumbs").innerHTML = many ? V.list.map((x, i) => `<button onclick="show(${i})"><img src="/img/${x.img}" alt=""><span>${esc(short(x.name))}</span></button>`).join("") : "";
+  document.querySelectorAll(".arrow").forEach((a) => (a.hidden = !many));
+  $("vBuy").hidden = k.price <= 0;
+  $("vBuy").textContent = `Comprar ${short(k.name)}`;
+  $("vBuy").onclick = () => { closeViewer(); buy(k.id); };
+  show(0);
+  $("v").classList.add("open");
+}
+function show(i) {
+  V.i = (i + V.list.length) % V.list.length;
+  const x = V.list[V.i];
+  $("vImg").src = "/img/" + x.img;
+  $("vBg").style.backgroundImage = `url(/img/${x.img})`;
+  $("vTitle").textContent = x.name;
+  $("vTag").textContent = V.i === 0 ? (V.owner.price > 0 ? brl(V.owner.price) : "Grátis") : `Incluso no ${V.owner.name}`;
+  $("vCount").textContent = V.list.length > 1 ? `${V.i + 1} de ${V.list.length}` : "";
+  document.querySelectorAll("#vThumbs button").forEach((b, j) => b.classList.toggle("on", j === V.i));
+}
+const step = (d) => show(V.i + d);
+const closeViewer = () => $("v").classList.remove("open");
+$("v").addEventListener("click", (e) => { if (e.target.id === "v") closeViewer(); });
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { closeViewer(); closeBuy(); }
+  if (!$("v").classList.contains("open")) return;
+  if (e.key === "ArrowLeft") step(-1); else if (e.key === "ArrowRight") step(1);
+});
+let tx = 0;
+$("vImg").addEventListener("touchstart", (e) => (tx = e.touches[0].clientX), { passive: true });
+$("vImg").addEventListener("touchend", (e) => { const d = e.changedTouches[0].clientX - tx; if (Math.abs(d) > 40) step(d < 0 ? 1 : -1); });
+
+// ---- compra ----
+function closeBuy() { $("m").classList.remove("open"); clearInterval(poll); }
+$("m").addEventListener("click", (e) => { if (e.target.id === "m") closeBuy(); });
+const closeBtn = `<button class="close" onclick="closeBuy()" aria-label="Fechar">${ico("x")}</button>`;
+
+function buy(id) {
+  const k = KITS[id];
+  if (!k) return;
+  if (!ME.steamid) { lsSet("a6pending", id); location.href = "/steam-login"; return; }
+  lsDel("a6pending");
+  const saved = JSON.parse(lsGet("a6buyer") || "{}");
+  $("mb").innerHTML = `${closeBtn}<div class="lbl">Finalizar compra</div><h3 class="h">${esc(k.name)}</h3>
+    <div class="price"><span class="v" style="font-size:34px">${brl(k.price)}</span></div>
+    <div class="field"><label>Conta que recebe</label>
+      <div class="who"><div>${esc(ME.name || "Steam")}<small>${ME.steamid}</small></div><a href="/logout">Trocar</a></div></div>
+    <div class="field"><label for="em">E-mail pro comprovante</label><input id="em" type="email" autocomplete="email" value="${esc(saved.email || "")}"></div>
+    <div class="err" id="er"></div>
+    <div class="mrow"><button class="btn btn-s" onclick="closeBuy()">Cancelar</button><button class="btn btn-p" id="go" onclick="pay('${id}')">Gerar PIX</button></div>`;
+  $("m").classList.add("open");
+}
+
+async function pay(id) {
+  const body = { kit: id, email: $("em").value.trim() };
+  $("go").disabled = true; $("go").textContent = "Gerando";
+  lsSet("a6buyer", JSON.stringify({ email: body.email }));
+  const r = await fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (r.status === 401 && j.login) { lsSet("a6pending", id); location.href = "/steam-login"; return; }
+  if (!r.ok) { $("er").textContent = j.error || "Erro, tenta de novo."; $("go").disabled = false; $("go").textContent = "Gerar PIX"; return; }
+  $("mb").innerHTML = `${closeBtn}<div class="lbl">Pagamento PIX</div><h3 class="h">${brl(j.amount)}</h3>
+    ${j.qr_base64 ? `<img class="qr" src="data:image/png;base64,${j.qr_base64}" alt="QR Code PIX">` : ""}
+    <div class="field"><label>PIX copia e cola</label><textarea rows="4" readonly id="cc">${esc(j.qr || "")}</textarea></div>
+    <div class="mrow"><button class="btn btn-p" onclick="navigator.clipboard.writeText($('cc').value);this.lastChild.textContent='Copiado'">${ico("copy")}<span>Copiar código</span></button></div>
+    <div class="wait" id="wt"><span class="spin"></span>Aguardando pagamento. Pode deixar essa tela aberta.</div>`;
+  poll = setInterval(async () => {
+    const s = await fetch("/api/order/" + j.order).then((r) => r.json()).catch(() => ({}));
+    if (s.status === "delivered" || s.status === "approved") {
+      clearInterval(poll);
+      $("mb").innerHTML = `${closeBtn}<div class="done"><div class="ok">${ico("check")}</div><h3 class="h">Pagamento aprovado</h3>
+        <p class="mut">${s.status === "delivered" ? "Kit ativado na sua conta. Se estiver no servidor, relogue." : "Pagamento recebido. O servidor está fora do ar agora; a staff ativa assim que voltar."}</p>
+        <div class="mrow"><button class="btn btn-p" onclick="closeBuy()">Fechar</button></div></div>`;
+    } else if (["rejected", "cancelled"].includes(s.status)) {
+      clearInterval(poll); $("wt").textContent = "Pagamento cancelado ou recusado.";
+    }
+  }, 5000);
+}
+
+load().then(loadMe);
+status(); setInterval(status, 20000);
+</script>
+</body>
+</html>
