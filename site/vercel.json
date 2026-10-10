@@ -1,11 +1,11 @@
 {
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://URL-DA-HOSPEDAGEM-DO-BOT/api/:path*" },
-    { "source": "/steam-login/:path*", "destination": "https://URL-DA-HOSPEDAGEM-DO-BOT/steam-login/:path*" },
-    { "source": "/steam-login", "destination": "https://URL-DA-HOSPEDAGEM-DO-BOT/steam-login" },
-    { "source": "/vincular/:path*", "destination": "https://URL-DA-HOSPEDAGEM-DO-BOT/vincular/:path*" },
-    { "source": "/vincular", "destination": "https://URL-DA-HOSPEDAGEM-DO-BOT/vincular" },
-    { "source": "/logout", "destination": "https://URL-DA-HOSPEDAGEM-DO-BOT/logout" }
+    { "source": "/steam-login/:path*", "destination": "http://85.209.93.33:30002/steam-login/:path*" },
+    { "source": "/steam-login", "destination": "http://85.209.93.33:30002/steam-login" },
+    { "source": "/vincular/:path*", "destination": "http://85.209.93.33:30002/vincular/:path*" },
+    { "source": "/vincular", "destination": "http://85.209.93.33:30002/vincular" },
+    { "source": "/logout", "destination": "http://85.209.93.33:30002/logout" }
   ],
   "headers": [
     { "source": "/(img|fonts)/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000, immutable" }] }
