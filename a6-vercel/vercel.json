@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/api/:path*",         "destination": "/api/bot?__r=api/:path*" },
+    { "source": "/steam-login",        "destination": "/api/bot?__r=steam-login" },
+    { "source": "/steam-login/:path*", "destination": "/api/bot?__r=steam-login/:path*" },
+    { "source": "/vincular",           "destination": "/api/bot?__r=vincular" },
+    { "source": "/vincular/:path*",    "destination": "/api/bot?__r=vincular/:path*" },
+    { "source": "/logout",             "destination": "/api/bot?__r=logout" }
+  ],
+  "headers": [
+    { "source": "/(img|fonts|video)/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000, immutable" }] }
+  ]
+}
